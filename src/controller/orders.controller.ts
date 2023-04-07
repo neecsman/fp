@@ -38,8 +38,6 @@ export class OrderController {
         //   });
         // }
 
-        console.log("Оплата по карте");
-
         return res.json(data);
       }
 

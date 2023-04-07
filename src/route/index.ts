@@ -31,6 +31,6 @@ router.post("/api/orders/calc", Order.calcOrder);
 router.post("/api/orders/create", Order.createOrder);
 router.post("/api/orders/cancel", Order.cancelOrder);
 
-router.get("api/payments/callback", Payment.callback);
+router.get("/api/payments/callback", Payment.callback);
 
 export default router;
