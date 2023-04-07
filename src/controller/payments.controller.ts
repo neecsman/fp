@@ -13,9 +13,9 @@ export class OrderController {
 
     console.log(data);
 
-    // const paymentService = new PaymentService();
+    const paymentService = new PaymentService();
+    paymentService.updateStatus(data);
 
-    // paymentService.updateStatus(data);
     return res.status(200);
   }
 }

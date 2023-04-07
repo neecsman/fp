@@ -118,11 +118,21 @@ class OrderService {
 
         //Сделать редирект с номером заказа и на клиенте получать данные заказа из url через router params
 
-        return paymentResponse;
+        const userDto = new UserDto(candidate);
+
+        return {
+          data: paymentResponse,
+          refreshToken: null,
+          accessToken: null,
+          user: userDto,
+        };
       }
 
       if (!candidate) {
         //регистрируем и создаем заказ
+
+        console.log("Регистрируем пользователя");
+
         const newPassword = generate();
         const hashPassword = await bcrypt.hash(newPassword, 3);
         const confirmLink = v4();
@@ -139,10 +149,60 @@ class OrderService {
         const newUser = await AppDataSource.manager.save(user);
         // await MailService.sendActivationMail(data.email, confirmLink);
 
+        console.log("Создаем заказ в базе данных");
+
         const orderRep = AppDataSource.getRepository(Orders);
         const order = orderRep.create(data);
         order.userId = newUser.id;
         const savedOrder = await orderRep.save(order);
+
+        console.log("Создаем токены");
+
+        const userDto = new UserDto(newUser);
+        const tokenService = new TokenService();
+        const tokens = tokenService.generateToken({ ...userDto });
+
+        await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
+        console.log("Создем хэш оплаты");
+
+        const secret = `${process.env.ENDPOINT_ID}${order.id}${
+          order.taking_amount * 100
+        }${order.email}${process.env.MERCHANT_CONTROL}`;
+        const controlHash = crypto.SHA1(secret).toString();
+
+        console.log("Контрольная сумма", controlHash);
+
+        let requestData: IPaymentRequest = {
+          client_orderid: order.id,
+          order_desc: `Оплата доставки №${order.id} на сумму ${order.taking_amount} руб.`,
+          amount: order.taking_amount,
+          currency: "RUB",
+          address1: order.adress_from,
+          city: "Moscow",
+          zip_code: "000000",
+          country: "RU",
+          phone: order.customer_phone,
+          email: order.email,
+          ipaddress: userIP,
+          control: controlHash,
+          server_callback_url: process.env.SERVER_CALLBACK_URL || "",
+          redirect_success_url:
+            `${process.env.REDIRECT_SECCESS_URL}${order.id}` || "",
+          redirect_fail_url:
+            `${process.env.REDIRECT_FAIL_URL}${order.id}` || "",
+        };
+
+        console.log("Сформировали объект запроса в connpay", requestData);
+
+        const paymentService = new PaymentService();
+
+        //Отправили запрос на оплату
+        const paymentResponse = await paymentService.payment(requestData);
+
+        console.log("Получили ответ от connpay", paymentResponse);
+
+        return { ...tokens, data: paymentResponse, user: userDto };
       }
     } catch (error) {
       console.log(error);
