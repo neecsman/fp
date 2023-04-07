@@ -1,0 +1,93 @@
+Запрос на создание транзакции
+POST https: //gate.connpay.com/paynet/api/v2/sale-form/31789
+Remote address: 94.26 .230 .122
+Parameters: 27
+address1: Санкт - Петербург
+amount: 3483.0
+city: Санкт - Петербург
+client_orderid: 123 - 0404 - 1972 / 2434726
+control: c385ac20384009fa8adf0199d788fdb000ba6fea
+country: RU
+currency: RUB
+email: gpregion1@gmail.com
+first_name: Василий
+ipaddress: 217.66.154.166
+last_name: Лавриненко
+order_desc: Оплата заказа 123-0404-1972: товар — 3303.0 р. (без скидки 4670.0 р.), доставка — 180.0 р.
+phone: 79817854226
+preferred_language: RU
+redirect_url: https://randewoo.ru/gateways/connpay/callback
+server_callback_url: https://randewoo.ru/gateways/connpay/callback
+zip_code: 187530
+
+
+
+Ответ 
+type=async-form-response
+serial-number=00000000-0000-0000-0000-00008f5d6b44
+merchant-order-id=123-0404-1972/2434726
+paynet-order-id=290315900
+redirect-url=https://ecom.randewoos.ru/ecom/form/init/BB6767484F67443566454778744B78525843612B6430666B674B5A4E3841327241715A6348707473465950773D
+
+
+
+Message: Send POST redirect to [https://randewoo.ru/gateways/connpay/callback] with params {
+  "error_message": "[171] ACQUIRING_INSUFFICIENT_FUNDS",
+  "processor-tx-id": "540651468",
+  "amount": "3483.00",
+  "merchant_order": "123-0404-1972/2434726",
+  "orderid": "290315900",
+  "client_orderid": "123-0404-1972/2434726",
+  "bin": "400680",
+  "control": "aa797aab1a33d4da40ec7055ae312f00bce8bb7c",
+  "descriptor": "PLL-RUB",
+  "type": "sale",
+  "card-type": "VISA",
+  "phone": "79817854226",
+  "last-four-digits": "7785",
+  "card-holder-name": "Vasiliy lavrinenko",
+  "error_code": "928373",
+  "status": "declined"
+}
+
+// Ответ по колбэку
+
+{
+  'serial-number': '9a5f4fae-2382-4b8e-95bd-d1c53c1f8b97',
+  merchant_order: '7',
+  client_orderid: '7',
+  'processor-tx-id': 'PNTEST-1797811',
+  orderid: '1797811',
+  status: 'approved',
+  amount: '2.00',
+  currency: 'RUB',
+  descriptor: 'Kofemaniya TEST IN EUR 3DS',
+  'original-gate-descriptor': 'Kofemaniya TEST IN EUR 3DS',
+  'gate-partial-reversal': 'enabled',
+  'gate-partial-capture': 'enabled',
+  type: 'sale',
+  name: 'asdasd',
+  'card-exp-month': '1',
+  'card-exp-year': '2024',
+  email: 'nikkolesnikovv@gmail.com',
+  'processor-rrn': '309777927516',
+  'approval-code': '422337',
+  control: 'aa63d038653559b4a64f8e0891012ef61a7147ae',
+  'last-four-digits': '4444',
+  bin: '444400',
+  'card-type': 'VISA',
+  phone: '89999765150',
+  'bank-name': 'UNKNOWN',
+  'processor-auth-credit-code': '395996',
+  'card-hash-id': '17062983',
+  'card-country-alpha-three-code': 'USA',
+  'processor-credit-rrn': '309760624977',
+  'processor-credit-arn': '408146679',
+  'processor-debit-arn': '495208445',
+  'ips-src-payment-product-code': 'A',
+  'ips-src-payment-product-name': 'Visa Traditional',
+  'ips-src-payment-type-code': 'Credit',
+  'ips-src-payment-type-name': 'VISA Credit',
+  'initial-amount': '2.00',
+  'transaction-date': '2023-04-07 15:47:58 MSK'
+}
