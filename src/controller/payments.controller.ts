@@ -11,7 +11,7 @@ export class OrderController {
 
     const data = req.query;
 
-    console.log(data);
+    console.log("Получил колбэк в контроллере", data);
 
     const paymentService = new PaymentService();
     paymentService.updateStatus(data);
