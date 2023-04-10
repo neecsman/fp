@@ -4,6 +4,7 @@ import { AppDataSource } from "../data-source";
 import { Orders } from "../entity";
 import { IPaymentRequest } from "../interface";
 import DostavistaService from "./dostavista.service";
+import ErrorService from "./error.service";
 
 class PaymentService {
   async payment(requestData: IPaymentRequest) {
@@ -23,8 +24,6 @@ class PaymentService {
   }
 
   async updateStatus(data: any) {
-    //Получить колбэк от сервера и обновить данные о статусе заказа в базе данных
-
     console.log("Получил колбэк в сервисе");
 
     const orderForUpdate = await AppDataSource.getRepository(Orders).findOneBy({
@@ -34,7 +33,7 @@ class PaymentService {
     console.log("Нашел оплаченный заказ");
 
     if (!orderForUpdate) {
-      return;
+      throw ErrorService.BadRequest("Такого заказа не существует");
     }
 
     // Нужно проверить статус оплаты, если ок то отправить заказ в достависту, если не ок, ничего не делать
@@ -46,9 +45,17 @@ class PaymentService {
 
     console.log("Обновил данные в базе");
 
-    const dostavistaService = new DostavistaService();
+    if (data.staus === "declined") {
+      throw ErrorService.BadRequest("Платеж был отклонен");
+    }
 
-    const dostavistaOrderResponse = await dostavistaService.newOrder(order);
+    if (data.status === "approved" && !order.dostavista_order_id) {
+      const dostavistaService = new DostavistaService();
+      const dostavistaOrderResponse = await dostavistaService.newOrder(order);
+      orderForUpdate.dostavista_order_id = dostavistaOrderResponse.order_id;
+
+      const savedOrder = await orderRep.save(orderForUpdate);
+    }
 
     console.log("Отправил заказ в достависту");
 
