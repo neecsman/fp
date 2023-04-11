@@ -86,8 +86,6 @@ class OrderService {
         }${order.email}${process.env.MERCHANT_CONTROL}`;
         const controlHash = crypto.SHA1(secret).toString();
 
-        console.log("Контрольная сумма", controlHash);
-
         let requestData: IPaymentRequest = {
           client_orderid: order.id,
           order_desc: `Оплата доставки №${order.id} на сумму ${order.taking_amount} руб.`,
@@ -147,7 +145,7 @@ class OrderService {
         user.middlename = data.customer_middlename;
 
         const newUser = await AppDataSource.manager.save(user);
-        // await MailService.sendActivationMail(data.email, confirmLink);
+        await MailService.sendRegistrationMail(data.email, newPassword);
 
         console.log("Создаем заказ в базе данных");
 
@@ -207,30 +205,6 @@ class OrderService {
     } catch (error) {
       console.log(error);
     }
-
-    // if (!refreshToken) {
-    //   throw ErrorService.UnauthorizedError();
-    // }
-
-    // const tokenService = new TokenService();
-    // const userData = tokenService.validateRefreshToken(refreshToken);
-
-    // if (!userData) {
-    //   throw ErrorService.UnauthorizedError();
-    // }
-
-    // TO DO
-    // Прописать логику обновления статусов заказа, поскольку теперь данные о заказе будут браться не из dostavista а с базы данных
-
-    // 1. Сохранить заказ в БД и получить его id
-    // 2. Если оплата по карте - вызывать сервис оплаты
-    // 3. Прописать логику платежного сервиса в соответсвтии со схемой
-    // 4. Прописать обработку колбэка от платежного сервиса и обновления статуса об оплате и статусе заказа
-    // 5. Прописать логику обновления статуса заказов от достависты (dostavista_collback_url не подходит для использования API_TOKEN на нескольких серверах)! Нужно делать запрос на сервер со списком заказов и проверять их статус, после чего обновлять их данные в базе, либо продумать другую логику.
-
-    //нужно вернуть токен и на фронте записать его в локалсторадж
-
-    // return data;
   }
 
   async createOrderWithCash(data: IOrder) {
@@ -275,6 +249,7 @@ class OrderService {
         console.log("Создали пользователя", user);
 
         const newUser = await AppDataSource.manager.save(user);
+        await MailService.sendRegistrationMail(data.email, newPassword);
 
         //Создаем ему токен доступа
         const userDto = new UserDto(newUser);
@@ -299,7 +274,7 @@ class OrderService {
         const dostavistaOrder = await dostavistaService.newOrder(savedOrder);
 
         //Возвращаем на клиент токен и заказ
-        return { ...tokens, order: dostavistaOrder, user: userDto };
+        return { ...tokens, data: dostavistaOrder, user: userDto };
       }
 
       console.log("Есть такой чел");
@@ -318,7 +293,7 @@ class OrderService {
       //Токен не нужен поскольку пользователь уже зарегистрировался и токен хранится у него в локале
 
       return {
-        order: savedOrder,
+        order: dostavistaOrder,
         user: userDto,
         accessToken: null,
         refreshToken: null,

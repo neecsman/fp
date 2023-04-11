@@ -31,29 +31,29 @@ export class OrderController {
       if (order.payments_method === "card") {
         const data = await orderService.createOrderWithCard(order, req.ip);
 
-        //   if (data && data.refreshToken) {
-        //   res.cookie("refreshToken", data.refreshToken, {
-        //     maxAge: 30 * 24 * 60 * 60 * 1000,
-        //     httpOnly: true,
-        //   });
-        // }
+        if (data && data.refreshToken) {
+          res.cookie("refreshToken", data.refreshToken, {
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+          });
+        }
 
         return res.json(data);
       }
 
-      // if (order.payments_method === "cash") {
-      //   const data = await orderService.createOrderWithCash(order);
+      if (order.payments_method === "cash") {
+        const data = await orderService.createOrderWithCash(order);
 
-      //   if (data && data.refreshToken) {
-      //     res.cookie("refreshToken", data.refreshToken, {
-      //       maxAge: 30 * 24 * 60 * 60 * 1000,
-      //       httpOnly: true,
-      //     });
-      //   }
+        if (data && data.refreshToken) {
+          res.cookie("refreshToken", data.refreshToken, {
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+          });
+        }
 
-      //   console.log("Оплата наличными");
-      //   return res.json(data);
-      // }
+        console.log("Оплата наличными");
+        return res.json(data);
+      }
     } catch (error) {
       console.log(error);
       error;

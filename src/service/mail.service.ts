@@ -178,6 +178,93 @@ class MailService {
     }
   }
 
+  async sendRegistrationMail(email: string, newPassword: string) {
+    const options = {
+      host: process.env.SMTP_HOST,
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    };
+
+    try {
+      let transporter = nodemailer.createTransport(options);
+      await transporter.sendMail({
+        from: `Fast Points ${process.env.SMTP_USER}`,
+        to: email,
+        subject: "Регистрация пользователя",
+        text: "",
+        html: `
+            <tbody><tr>
+              <td align="left" style="font-size:0px;padding:15px 15px 15px 15px;word-break:break-word;">
+                
+      <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;text-align:left;color:#000000;"><p style="font-size: 11px; font-family: Ubuntu, Helvetica, Arial;"><span style="font-size: 20px;">Восстановление пароля!</span></p></div>
+    
+              </td>
+            </tr>
+          
+            <tr>
+              <td align="left" style="font-size:0px;padding:15px 15px 15px 15px;word-break:break-word;">
+                
+      <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;text-align:left;color:#000000;"><p style="font-size: 11px; font-family: Ubuntu, Helvetica, Arial;"><span style="font-size: 12px;">Здравствуйте! Вы сделали заказ на FastPoints - служба доставки. Это временный пароль, изменить его можно в личном кабинете в разделе "Настройки"!</span></p></div>
+    
+              </td>
+            </tr>
+          
+            <tr>
+              <td align="center" vertical-align="middle" style="font-size:0px;padding:20px 20px 20px 20px;word-break:break-word;">
+                
+      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
+        <tbody><tr>
+          <td align="center" role="presentation" style="mso-padding-alt:9px 26px 9px 26px;" valign="middle">
+          <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;text-align:left;color:#000000;"><p style="font-size: 11px; font-family: Ubuntu, Helvetica, Arial;"><span style="font-size: 20px;">Ваш временный пароль: ${newPassword}</span></p></div>
+          </td>
+        </tr>
+      </tbody></table>
+    
+              </td>
+            </tr>
+          
+            <tr>
+              <td style="font-size:0px;padding:10px 10px;padding-top:10px;padding-right:10px;word-break:break-word;">
+                
+      <p style="font-family: Ubuntu, Helvetica, Arial; border-top: solid 1px #000000; font-size: 1; margin: 0px auto; width: 100%;">
+      </p>
+      
+      <!--[if mso | IE]>
+        <table
+           align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 1px #000000;font-size:1;margin:0px auto;width:580px;" role="presentation" width="580px"
+        >
+          <tr>
+            <td style="height:0;line-height:0;">
+              &nbsp;
+            </td>
+          </tr>
+        </table>
+      <![endif]-->
+    
+    
+              </td>
+            </tr>
+          
+            <tr>
+              <td align="left" style="font-size:0px;padding:15px 15px 15px 15px;word-break:break-word;">
+                
+      <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;text-align:left;color:#000000;"><p style="font-size: 11px; font-family: Ubuntu, Helvetica, Arial;">С уважением, команда FastPoints!</p></div>
+    
+              </td>
+            </tr>
+          
+      </tbody></table>
+                  `,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async sendFeedbackMail(email: string, title: string, text: string) {
     const options = {
       host: process.env.SMTP_HOST,
