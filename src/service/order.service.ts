@@ -356,6 +356,15 @@ class OrderService {
     const data = await baseQuery.post("/cancel-order", orderId);
     return data.data;
   }
+
+  async getStatus(id: any) {
+    try {
+      const order = await AppDataSource.getRepository(Orders).findOneBy({ id });
+      return order;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default OrderService;

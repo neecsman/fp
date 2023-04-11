@@ -98,9 +98,10 @@ export class OrderController {
   ) {
     try {
       const id = req.query.id;
-      console.log(id);
+      const orderService = new OrderService();
+      const order = await orderService.getStatus(id);
 
-      return res.sendStatus(200);
+      return res.json(order);
     } catch (error) {
       next(error);
     }
