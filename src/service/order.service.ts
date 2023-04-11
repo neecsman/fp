@@ -25,17 +25,17 @@ class OrderService {
 
     const tokenService = new TokenService();
     const userData = tokenService.validateRefreshToken(refreshToken);
+    console.log(userData);
 
     if (!userData) {
       throw ErrorService.UnauthorizedError();
     }
 
-    const result = await AppDataSource.getRepository(Orders)
+    const orders = await AppDataSource.getRepository(Orders)
       .createQueryBuilder("orders")
       .where("orders.userId = :id", { id: userData.id })
       .getMany();
 
-    const orders = result.map((item) => item.dostavista_order_id);
     return orders;
     // if (!orders.length) {
     //   return [];
