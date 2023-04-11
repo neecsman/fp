@@ -202,7 +202,7 @@ class MailService {
             <tbody><tr>
               <td align="left" style="font-size:0px;padding:15px 15px 15px 15px;word-break:break-word;">
                 
-      <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;text-align:left;color:#000000;"><p style="font-size: 11px; font-family: Ubuntu, Helvetica, Arial;"><span style="font-size: 20px;">Восстановление пароля!</span></p></div>
+      <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;text-align:left;color:#000000;"><p style="font-size: 11px; font-family: Ubuntu, Helvetica, Arial;"><span style="font-size: 20px;">Регистрация на FastPoints!</span></p></div>
     
               </td>
             </tr>
