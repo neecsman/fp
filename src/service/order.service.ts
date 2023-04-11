@@ -358,16 +358,12 @@ class OrderService {
   }
 
   async getStatus(id: any) {
-    try {
-      const order = await AppDataSource.getRepository(Orders).findOneBy({ id });
-
-      if (!order) {
-        throw ErrorService.BadRequest("Такого заказа не существует");
-      }
-      return order;
-    } catch (error) {
-      console.log(error);
+    const order = await AppDataSource.getRepository(Orders).findOneBy({ id });
+    if (!order) {
+      throw ErrorService.BadRequest("Такого заказа не существует");
     }
+
+    return order;
   }
 }
 
