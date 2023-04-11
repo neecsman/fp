@@ -191,6 +191,8 @@ class MailService {
 
     try {
       let transporter = nodemailer.createTransport(options);
+      console.log("Отправка сообщения на почту с паролем из сервиса");
+
       await transporter.sendMail({
         from: `Fast Points ${process.env.SMTP_USER}`,
         to: email,

@@ -12,6 +12,6 @@ export default interface IPaymentRequest {
   ipaddress: string;
   control: string;
   server_callback_url: string;
-  redirect_success_url: string;
-  redirect_fail_url: string;
+  redirect_success_url?: string;
+  redirect_fail_url?: string;
 }

@@ -36,17 +36,17 @@ class OrderService {
       .getMany();
 
     const orders = result.map((item) => item.dostavista_order_id);
-
-    if (!orders.length) {
-      return [];
-    } else {
-      const data = await baseQuery.get(`/orders`, {
-        params: {
-          order_id: orders,
-        },
-      });
-      return data.data.orders;
-    }
+    return orders;
+    // if (!orders.length) {
+    //   return [];
+    // } else {
+    //   const data = await baseQuery.get(`/orders`, {
+    //     params: {
+    //       order_id: orders,
+    //     },
+    //   });
+    //   return data.data.orders;
+    // }
   }
 
   async createOrderWithCard(data: IOrder, userIP: string) {
@@ -145,6 +145,8 @@ class OrderService {
         user.middlename = data.customer_middlename;
 
         const newUser = await AppDataSource.manager.save(user);
+
+        console.log("Отправляем email");
         await MailService.sendRegistrationMail(data.email, newPassword);
 
         console.log("Создаем заказ в базе данных");
