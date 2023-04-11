@@ -27,6 +27,7 @@ router.post("/api/mail/order", Mail.order);
 router.post("/api/mail/candidate", Mail.candidate);
 
 router.get("/api/orders", Order.getOrders);
+router.get("/api/orders/status", Order.getStatus);
 router.post("/api/orders/calc", Order.calcOrder);
 router.post("/api/orders/create", Order.createOrder);
 router.post("/api/orders/cancel", Order.cancelOrder);
