@@ -38,6 +38,8 @@ class PaymentService {
 
     // Нужно проверить статус оплаты, если ок то отправить заказ в достависту, если не ок, ничего не делать
 
+    console.log("Изменил статус оплаты к заказу");
+
     orderForUpdate.payment_status = data.status;
 
     const orderRep = AppDataSource.getRepository(Orders);
@@ -49,15 +51,14 @@ class PaymentService {
       throw ErrorService.BadRequest("Платеж был отклонен");
     }
 
+    //Проверил оплачен ли заказ и проверил не отправлен ли он был уже в достависту
     if (data.status === "approved" && !order.dostavista_order_id) {
       const dostavistaService = new DostavistaService();
       const dostavistaOrderResponse = await dostavistaService.newOrder(order);
       orderForUpdate.dostavista_order_id = dostavistaOrderResponse.order_id;
-
-      const savedOrder = await orderRep.save(orderForUpdate);
+      await orderRep.save(orderForUpdate);
+      console.log("Отправил заказ в достависту");
     }
-
-    console.log("Отправил заказ в достависту");
 
     return order;
   }

@@ -90,6 +90,21 @@ export class OrderController {
       next(error);
     }
   }
+
+  async getStatus(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    try {
+      const id = req.query.id;
+      console.log(id);
+
+      return res.sendStatus(200);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default OrderController;

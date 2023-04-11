@@ -13,8 +13,8 @@ export class OrderController {
 
     console.log("Получил колбэк в контроллере", data);
 
-    // const paymentService = new PaymentService();
-    // paymentService.updateStatus(data);
+    const paymentService = new PaymentService();
+    paymentService.updateStatus(data);
 
     return res.sendStatus(200);
   }
