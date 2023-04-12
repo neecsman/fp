@@ -38,6 +38,8 @@ export class OrderController {
       return res.sendStatus(200);
     } catch (error) {
       console.log(error);
+      console.log("Сработал catch в callback");
+
       next(error);
     }
   }
