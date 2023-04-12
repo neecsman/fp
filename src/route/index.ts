@@ -34,6 +34,6 @@ router.post("/api/orders/cancel", Order.cancelOrder);
 
 router.post("/api/payments/pay", Payment.payOrder);
 router.get("/api/payments/callback", Payment.callback);
-router.get("/api/payments/redirect", Payment.redirect);
+router.post("/api/payments/redirect", Payment.redirect);
 
 export default router;
