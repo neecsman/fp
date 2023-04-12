@@ -16,7 +16,6 @@ export class OrderController {
       return res.json(data);
     } catch (error) {
       console.log(error);
-
       next(error);
     }
   }
@@ -38,6 +37,7 @@ export class OrderController {
 
       return res.sendStatus(200);
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }
@@ -53,6 +53,7 @@ export class OrderController {
 
       return res.status(301).redirect(`${process.env.CLIENT_URL}/orders`);
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }
