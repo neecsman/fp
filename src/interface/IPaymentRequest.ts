@@ -14,4 +14,5 @@ export default interface IPaymentRequest {
   server_callback_url: string;
   redirect_success_url?: string;
   redirect_fail_url?: string;
+  redirect_url?: string;
 }

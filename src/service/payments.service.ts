@@ -1,4 +1,5 @@
 import qs from "qs";
+import crypto from "crypto-js";
 import { paymentsQuery } from "../API/axios";
 import { AppDataSource } from "../data-source";
 import { Orders } from "../entity";
@@ -7,8 +8,40 @@ import DostavistaService from "./dostavista.service";
 import ErrorService from "./error.service";
 
 class PaymentService {
-  async payment(requestData: IPaymentRequest) {
+  async payment(id: number, ip: string) {
+    console.log(id, ip);
+
     try {
+      const order = await AppDataSource.getRepository(Orders).findOneBy({
+        id,
+      });
+
+      if (!order) {
+        throw ErrorService.BadRequest("Такого заказа не существует...");
+      }
+
+      const secret = `${process.env.ENDPOINT_ID}${order.id}${
+        order.taking_amount * 100
+      }${order.email}${process.env.MERCHANT_CONTROL}`;
+      const controlHash = crypto.SHA1(secret).toString();
+
+      let requestData: IPaymentRequest = {
+        client_orderid: order.id,
+        order_desc: `Оплата доставки №${order.id} на сумму ${order.taking_amount} руб.`,
+        amount: order.taking_amount,
+        currency: "RUB",
+        address1: order.adress_from,
+        city: "Moscow",
+        zip_code: "000000",
+        country: "RU",
+        phone: order.customer_phone,
+        email: order.email,
+        ipaddress: ip,
+        control: controlHash,
+        server_callback_url: process.env.SERVER_CALLBACK_URL || "",
+        redirect_url: `${process.env.REDIRECT_URL}` || "",
+      };
+
       const res = await paymentsQuery.post(
         `${process.env.ENDPOINT_ID}`,
         requestData
@@ -16,6 +49,7 @@ class PaymentService {
       console.log("Запрос на оплату улетел");
 
       const data = qs.parse(res.data);
+      console.log(data);
 
       return data;
     } catch (error) {

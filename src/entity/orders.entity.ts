@@ -5,6 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
   BeforeInsert,
+  CreateDateColumn,
 } from "typeorm";
 
 import { Users } from "./";
@@ -91,6 +92,9 @@ export default class Orders {
 
   @Column()
   total_weight: number;
+
+  @CreateDateColumn()
+  created_datetime: Date;
 
   @Column({ nullable: true })
   note_from: string;

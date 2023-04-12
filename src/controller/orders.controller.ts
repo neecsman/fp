@@ -82,9 +82,9 @@ export class OrderController {
     next: express.NextFunction
   ) {
     try {
-      const orderId = req.body;
+      const { order_id } = req.body;
       const orderService = new OrderService();
-      const data = await orderService.cancelOrder(orderId);
+      const data = await orderService.cancelOrder(order_id);
       return res.json(data);
     } catch (error) {
       next(error);

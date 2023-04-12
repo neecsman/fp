@@ -34,6 +34,7 @@ class OrderService {
     const orders = await AppDataSource.getRepository(Orders)
       .createQueryBuilder("orders")
       .where("orders.userId = :id", { id: userData.id })
+      .orderBy("created_datetime", "DESC")
       .getMany();
 
     return orders;
@@ -81,37 +82,41 @@ class OrderService {
 
         //Формируем запрос на оплату
 
-        const secret = `${process.env.ENDPOINT_ID}${order.id}${
-          order.taking_amount * 100
-        }${order.email}${process.env.MERCHANT_CONTROL}`;
-        const controlHash = crypto.SHA1(secret).toString();
+        // const secret = `${process.env.ENDPOINT_ID}${order.id}${
+        //   order.taking_amount * 100
+        // }${order.email}${process.env.MERCHANT_CONTROL}`;
+        // const controlHash = crypto.SHA1(secret).toString();
 
-        let requestData: IPaymentRequest = {
-          client_orderid: order.id,
-          order_desc: `Оплата доставки №${order.id} на сумму ${order.taking_amount} руб.`,
-          amount: order.taking_amount,
-          currency: "RUB",
-          address1: order.adress_from,
-          city: "Moscow",
-          zip_code: "000000",
-          country: "RU",
-          phone: order.customer_phone,
-          email: order.email,
-          ipaddress: userIP,
-          control: controlHash,
-          server_callback_url: process.env.SERVER_CALLBACK_URL || "",
-          redirect_success_url:
-            `${process.env.REDIRECT_SECCESS_URL}${order.id}` || "",
-          redirect_fail_url:
-            `${process.env.REDIRECT_FAIL_URL}${order.id}` || "",
-        };
+        // let requestData: IPaymentRequest = {
+        //   client_orderid: order.id,
+        //   order_desc: `Оплата доставки №${order.id} на сумму ${order.taking_amount} руб.`,
+        //   amount: order.taking_amount,
+        //   currency: "RUB",
+        //   address1: order.adress_from,
+        //   city: "Moscow",
+        //   zip_code: "000000",
+        //   country: "RU",
+        //   phone: order.customer_phone,
+        //   email: order.email,
+        //   ipaddress: userIP,
+        //   control: controlHash,
+        //   server_callback_url: process.env.SERVER_CALLBACK_URL || "",
+        //   // redirect_success_url:
+        //   //   `${process.env.REDIRECT_SECCESS_URL}${order.id}` || "",
+        //   // redirect_fail_url:
+        //   //   `${process.env.REDIRECT_FAIL_URL}${order.id}` || "",
+        //   redirect_url: `${process.env.REDIRECT_URL}` || "",
+        // };
 
-        console.log("Объект запроса в connpay", requestData);
+        // console.log("Объект запроса в connpay", requestData);
 
         const paymentService = new PaymentService();
 
         //Отправили запрос на оплату
-        const paymentResponse = await paymentService.payment(requestData); // Получили ответ с redirect 3DS
+        const paymentResponse = await paymentService.payment(
+          savedOrder.id,
+          userIP
+        ); // Получили ответ с redirect 3DS
         console.log("Ответ от connpay", paymentResponse);
 
         //Сделать редирект с номером заказа и на клиенте получать данные заказа из url через router params
@@ -166,39 +171,42 @@ class OrderService {
 
         console.log("Создем хэш оплаты");
 
-        const secret = `${process.env.ENDPOINT_ID}${order.id}${
-          order.taking_amount * 100
-        }${order.email}${process.env.MERCHANT_CONTROL}`;
-        const controlHash = crypto.SHA1(secret).toString();
+        // const secret = `${process.env.ENDPOINT_ID}${order.id}${
+        //   order.taking_amount * 100
+        // }${order.email}${process.env.MERCHANT_CONTROL}`;
+        // const controlHash = crypto.SHA1(secret).toString();
 
-        console.log("Контрольная сумма", controlHash);
+        // console.log("Контрольная сумма", controlHash);
 
-        let requestData: IPaymentRequest = {
-          client_orderid: order.id,
-          order_desc: `Оплата доставки №${order.id} на сумму ${order.taking_amount} руб.`,
-          amount: order.taking_amount,
-          currency: "RUB",
-          address1: order.adress_from,
-          city: "Moscow",
-          zip_code: "000000",
-          country: "RU",
-          phone: order.customer_phone,
-          email: order.email,
-          ipaddress: userIP,
-          control: controlHash,
-          server_callback_url: process.env.SERVER_CALLBACK_URL || "",
-          redirect_success_url:
-            `${process.env.REDIRECT_SECCESS_URL}${order.id}` || "",
-          redirect_fail_url:
-            `${process.env.REDIRECT_FAIL_URL}${order.id}` || "",
-        };
+        // let requestData: IPaymentRequest = {
+        //   client_orderid: order.id,
+        //   order_desc: `Оплата доставки №${order.id} на сумму ${order.taking_amount} руб.`,
+        //   amount: order.taking_amount,
+        //   currency: "RUB",
+        //   address1: order.adress_from,
+        //   city: "Moscow",
+        //   zip_code: "000000",
+        //   country: "RU",
+        //   phone: order.customer_phone,
+        //   email: order.email,
+        //   ipaddress: userIP,
+        //   control: controlHash,
+        //   server_callback_url: process.env.SERVER_CALLBACK_URL || "",
+        //   redirect_success_url:
+        //     `${process.env.REDIRECT_SECCESS_URL}${order.id}` || "",
+        //   redirect_fail_url:
+        //     `${process.env.REDIRECT_FAIL_URL}${order.id}` || "",
+        // };
 
-        console.log("Сформировали объект запроса в connpay", requestData);
+        // console.log("Сформировали объект запроса в connpay", requestData);
 
         const paymentService = new PaymentService();
 
         //Отправили запрос на оплату
-        const paymentResponse = await paymentService.payment(requestData);
+        const paymentResponse = await paymentService.payment(
+          savedOrder.id,
+          userIP
+        );
 
         console.log("Получили ответ от connpay", paymentResponse);
 
@@ -329,9 +337,26 @@ class OrderService {
     return data.data;
   }
 
-  async cancelOrder(orderId: object) {
-    const data = await baseQuery.post("/cancel-order", orderId);
-    return data.data;
+  async cancelOrder(id: number) {
+    const order = await AppDataSource.getRepository(Orders).findOneBy({
+      id,
+    });
+
+    if (!order) {
+      throw ErrorService.BadRequest("Такого заказа не существует...");
+    }
+    if (order.dostavista_order_id) {
+      const data = await baseQuery.post("/cancel-order", {
+        order_id: order.dostavista_order_id,
+      });
+      order.dostavista_order_status = "canceled";
+      await AppDataSource.getRepository(Orders).save(order);
+      return data.data;
+    }
+
+    order.dostavista_order_status = "cancelled";
+    await AppDataSource.getRepository(Orders).save(order);
+    return order;
   }
 
   async getStatus(id: any) {
