@@ -26,8 +26,6 @@ export class OrderController {
     next: express.NextFunction
   ) {
     try {
-      console.log("Что-то пришло");
-
       const data = req.query;
 
       console.log("Получил колбэк в контроллере", data);

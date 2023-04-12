@@ -94,6 +94,9 @@ class PaymentService {
       console.log("Отправил заказ в достависту");
     }
 
+    if (!order) {
+      return;
+    }
     return order;
   }
 }
