@@ -33,6 +33,8 @@ export class OrderController {
       const paymentService = new PaymentService();
       paymentService.updateStatus(data);
 
+      console.log("ок вернули");
+
       return res.sendStatus(200);
     } catch (error) {
       console.log(error);
