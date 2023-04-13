@@ -37,16 +37,14 @@ class OrderService {
       .orderBy("created_datetime", "DESC")
       .getMany();
 
-    const dostavistaOrderID = orders.map((item) => {
-      order_id: item.dostavista_order_id;
-    });
+    const dostavistaOrderID = orders.map((item) => item.dostavista_order_id);
 
     console.log(dostavistaOrderID);
 
-    const dostavistaOrders = await baseQuery.get("orders", {
-      params: dostavistaOrderID,
-    });
-    console.log(dostavistaOrders);
+    // const dostavistaOrders = await baseQuery.get("orders", {
+    //   params: dostavistaOrderID,
+    // });
+    // console.log(dostavistaOrders);
 
     return orders;
   }
