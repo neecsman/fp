@@ -37,9 +37,11 @@ class OrderService {
       .orderBy("created_datetime", "DESC")
       .getMany();
 
-    const dostavistaOrderID = orders.map((item) => {
+    const dostavistaOrderID: object[] = [];
+
+    orders.forEach((item) => {
       if (item.dostavista_order_id) {
-        return { order_id: item.dostavista_order_id };
+        dostavistaOrderID.push({ order_id: item.dostavista_order_id });
       }
     });
 
