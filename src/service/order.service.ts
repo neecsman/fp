@@ -301,12 +301,12 @@ class OrderService {
       const data = await baseQuery.post("/cancel-order", {
         order_id: order.dostavista_order_id,
       });
-      order.dostavista_order_status = "cancelled";
+      order.dostavista_order_status = "canceled";
       await AppDataSource.getRepository(Orders).save(order);
       return data.data;
     }
 
-    order.dostavista_order_status = "cancelled";
+    order.dostavista_order_status = "canceled";
     await AppDataSource.getRepository(Orders).save(order);
     return order;
   }
