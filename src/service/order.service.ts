@@ -51,6 +51,7 @@ class OrderService {
       params: dostavistaOrderID,
     });
     console.log(dostavistaOrders);
+    console.log(dostavistaOrders.data.errors[0]);
 
     if (dostavistaOrders) {
       dostavistaOrders.data.orders.forEach(async (item: any) => {
