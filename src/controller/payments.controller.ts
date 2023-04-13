@@ -50,12 +50,20 @@ export class OrderController {
     next: express.NextFunction
   ) {
     try {
-      const query = req.query;
-      const body = req.body;
-      console.log("Данные из редиректа query", query);
-      console.log("Данные из редиректа body", body);
-
-      return res.status(301).redirect(`${process.env.CLIENT_URL}/orders`);
+      const data = req.body;
+      if (data.status === "approved") {
+        return res
+          .status(301)
+          .redirect(
+            `${process.env.CLIENT_URL}/orders/success/${data.client_orderid}`
+          );
+      } else {
+        return res
+          .status(301)
+          .redirect(
+            `${process.env.CLIENT_URL}/orders/fail/${data.client_orderid}`
+          );
+      }
     } catch (error) {
       console.log(error);
       next(error);
