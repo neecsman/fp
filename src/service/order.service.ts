@@ -235,7 +235,7 @@ class OrderService {
         const dostavistaOrder = await dostavistaService.newOrder(savedOrder);
 
         //Возвращаем на клиент токен и заказ
-        return { ...tokens, data: dostavistaOrder, user: userDto };
+        return { ...tokens, data: savedOrder, user: userDto };
       }
 
       console.log("Есть такой чел");
@@ -254,7 +254,7 @@ class OrderService {
       //Токен не нужен поскольку пользователь уже зарегистрировался и токен хранится у него в локале
 
       return {
-        order: dostavistaOrder,
+        order: savedOrder,
         user: userDto,
         accessToken: null,
         refreshToken: null,
