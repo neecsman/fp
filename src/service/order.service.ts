@@ -37,18 +37,18 @@ class OrderService {
       .orderBy("created_datetime", "DESC")
       .getMany();
 
-    const dostavistaOrderID: object[] = [];
+    const dostavistaOrderID: any = [];
 
     orders.forEach((item) => {
       if (item.dostavista_order_id) {
-        dostavistaOrderID.push({ order_id: item.dostavista_order_id });
+        dostavistaOrderID.push(item.dostavista_order_id);
       }
     });
 
     console.log(dostavistaOrderID);
 
     const dostavistaOrders = await baseQuery.get("orders", {
-      params: dostavistaOrderID,
+      params: { order_id: dostavistaOrderID },
     });
     console.log(dostavistaOrders);
     console.log(dostavistaOrders.data.errors[0]);
