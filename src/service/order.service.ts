@@ -2,7 +2,6 @@ import crypto from "crypto-js";
 import { generate } from "shortid";
 import bcrypt from "bcrypt";
 import { v4 } from "uuid";
-
 import { Orders, Users } from "../entity";
 import baseQuery from "../API/axios";
 import {
@@ -51,7 +50,6 @@ class OrderService {
       params: { order_id: dostavistaOrderID },
     });
     console.log(dostavistaOrders);
-    console.log(dostavistaOrders.data.errors[0]);
 
     if (dostavistaOrders) {
       dostavistaOrders.data.orders.forEach(async (item: any) => {
