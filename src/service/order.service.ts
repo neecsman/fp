@@ -44,13 +44,10 @@ class OrderService {
       }
     });
 
-    console.log(dostavistaOrderID);
-
     if (dostavistaOrderID.length) {
       const dostavistaOrders = await baseQuery.get("orders", {
         params: { order_id: dostavistaOrderID },
       });
-      console.log(dostavistaOrders);
 
       if (dostavistaOrders) {
         dostavistaOrders.data.orders.forEach(async (item: any) => {

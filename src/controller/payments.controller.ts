@@ -50,8 +50,10 @@ export class OrderController {
     next: express.NextFunction
   ) {
     try {
-      const data = req.query;
-      console.log("Данные из редиректа", data);
+      const query = req.query;
+      const body = req.body;
+      console.log("Данные из редиректа query", query);
+      console.log("Данные из редиректа body", body);
 
       return res.status(301).redirect(`${process.env.CLIENT_URL}/orders`);
     } catch (error) {
