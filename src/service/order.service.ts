@@ -40,6 +40,9 @@ class OrderService {
     const dostavistaOrderID = orders.map((item) => {
       order_id: item.dostavista_order_id;
     });
+
+    console.log(dostavistaOrderID);
+
     const dostavistaOrders = await baseQuery.get("orders", {
       params: dostavistaOrderID,
     });
