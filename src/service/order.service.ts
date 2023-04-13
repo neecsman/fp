@@ -47,10 +47,24 @@ class OrderService {
 
     console.log(dostavistaOrderID);
 
-    // const dostavistaOrders = await baseQuery.get("orders", {
-    //   params: dostavistaOrderID,
-    // });
-    // console.log(dostavistaOrders);
+    const dostavistaOrders = await baseQuery.get("orders", {
+      params: dostavistaOrderID,
+    });
+    console.log(dostavistaOrders);
+
+    if (dostavistaOrders) {
+      dostavistaOrders.data.orders.forEach(async (item: any) => {
+        const order = await AppDataSource.getRepository(Orders).findOneBy({
+          dostavista_order_id: item.order_id,
+        });
+
+        if (!order) {
+          return;
+        }
+        order.dostavista_order_status = item.status;
+        AppDataSource.getRepository(Orders).save(order);
+      });
+    }
 
     return orders;
   }
