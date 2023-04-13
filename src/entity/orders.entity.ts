@@ -2,6 +2,7 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
+  PrimaryColumn,
   ManyToOne,
   JoinColumn,
   BeforeInsert,
@@ -12,7 +13,7 @@ import { Users } from "./";
 
 @Entity()
 export default class Orders {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: number;
 
   @BeforeInsert()
