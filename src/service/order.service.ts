@@ -37,17 +37,15 @@ class OrderService {
       .orderBy("created_datetime", "DESC")
       .getMany();
 
+    const dostavistaOrderID = orders.map((item) => {
+      order_id: item.dostavista_order_id;
+    });
+    const dostavistaOrders = baseQuery.get("orders", {
+      params: dostavistaOrderID,
+    });
+    console.log(dostavistaOrders);
+
     return orders;
-    // if (!orders.length) {
-    //   return [];
-    // } else {
-    //   const data = await baseQuery.get(`/orders`, {
-    //     params: {
-    //       order_id: orders,
-    //     },
-    //   });
-    //   return data.data.orders;
-    // }
   }
 
   async createOrderWithCard(data: IOrder, userIP: string) {
@@ -80,46 +78,13 @@ class OrderService {
         order.userId = candidate.id;
         const savedOrder = await orderRep.save(order);
 
-        //Формируем запрос на оплату
-
-        // const secret = `${process.env.ENDPOINT_ID}${order.id}${
-        //   order.taking_amount * 100
-        // }${order.email}${process.env.MERCHANT_CONTROL}`;
-        // const controlHash = crypto.SHA1(secret).toString();
-
-        // let requestData: IPaymentRequest = {
-        //   client_orderid: order.id,
-        //   order_desc: `Оплата доставки №${order.id} на сумму ${order.taking_amount} руб.`,
-        //   amount: order.taking_amount,
-        //   currency: "RUB",
-        //   address1: order.adress_from,
-        //   city: "Moscow",
-        //   zip_code: "000000",
-        //   country: "RU",
-        //   phone: order.customer_phone,
-        //   email: order.email,
-        //   ipaddress: userIP,
-        //   control: controlHash,
-        //   server_callback_url: process.env.SERVER_CALLBACK_URL || "",
-        //   // redirect_success_url:
-        //   //   `${process.env.REDIRECT_SECCESS_URL}${order.id}` || "",
-        //   // redirect_fail_url:
-        //   //   `${process.env.REDIRECT_FAIL_URL}${order.id}` || "",
-        //   redirect_url: `${process.env.REDIRECT_URL}` || "",
-        // };
-
-        // console.log("Объект запроса в connpay", requestData);
-
         const paymentService = new PaymentService();
-
-        //Отправили запрос на оплату
         const paymentResponse = await paymentService.payment(
           savedOrder.id,
           userIP
         ); // Получили ответ с redirect 3DS
-        console.log("Ответ от connpay", paymentResponse);
 
-        //Сделать редирект с номером заказа и на клиенте получать данные заказа из url через router params
+        console.log("Ответ от connpay", paymentResponse);
 
         const userDto = new UserDto(candidate);
 
@@ -132,8 +97,6 @@ class OrderService {
       }
 
       if (!candidate) {
-        //регистрируем и создаем заказ
-
         console.log("Регистрируем пользователя");
 
         const newPassword = generate();
@@ -170,39 +133,8 @@ class OrderService {
         await tokenService.saveToken(userDto.id, tokens.refreshToken);
 
         console.log("Создем хэш оплаты");
-
-        // const secret = `${process.env.ENDPOINT_ID}${order.id}${
-        //   order.taking_amount * 100
-        // }${order.email}${process.env.MERCHANT_CONTROL}`;
-        // const controlHash = crypto.SHA1(secret).toString();
-
-        // console.log("Контрольная сумма", controlHash);
-
-        // let requestData: IPaymentRequest = {
-        //   client_orderid: order.id,
-        //   order_desc: `Оплата доставки №${order.id} на сумму ${order.taking_amount} руб.`,
-        //   amount: order.taking_amount,
-        //   currency: "RUB",
-        //   address1: order.adress_from,
-        //   city: "Moscow",
-        //   zip_code: "000000",
-        //   country: "RU",
-        //   phone: order.customer_phone,
-        //   email: order.email,
-        //   ipaddress: userIP,
-        //   control: controlHash,
-        //   server_callback_url: process.env.SERVER_CALLBACK_URL || "",
-        //   redirect_success_url:
-        //     `${process.env.REDIRECT_SECCESS_URL}${order.id}` || "",
-        //   redirect_fail_url:
-        //     `${process.env.REDIRECT_FAIL_URL}${order.id}` || "",
-        // };
-
-        // console.log("Сформировали объект запроса в connpay", requestData);
-
         const paymentService = new PaymentService();
 
-        //Отправили запрос на оплату
         const paymentResponse = await paymentService.payment(
           savedOrder.id,
           userIP
