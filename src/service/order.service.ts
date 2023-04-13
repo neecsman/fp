@@ -46,7 +46,7 @@ class OrderService {
 
     console.log(dostavistaOrderID);
 
-    if (dostavistaOrderID) {
+    if (dostavistaOrderID.length) {
       const dostavistaOrders = await baseQuery.get("orders", {
         params: { order_id: dostavistaOrderID },
       });
