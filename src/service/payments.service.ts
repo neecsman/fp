@@ -20,7 +20,7 @@ class PaymentService {
         throw ErrorService.BadRequest("Такого заказа не существует...");
       }
 
-      const secret = `${process.env.ENDPOINT_ID}${order.id}${
+      const secret = `${process.env.LOGIN}${order.id}${
         order.taking_amount * 100
       }${order.email}${process.env.MERCHANT_CONTROL}`;
       const controlHash = crypto.SHA1(secret).toString();
